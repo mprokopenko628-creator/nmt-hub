@@ -120,7 +120,7 @@ export default function HistoryPracticeVariant({ variant = 1 }: { variant?: 1 | 
   }
   const earned = Math.min(200, historyScale[raw] ?? 0)
   if (mode === 'select') return <section className="notes-section quiz-section" aria-label="Вибір режиму тесту">
-    <p className="quiz-intro">Обери, як проходити тест «{variant === 1 ? 'Для Артема Ситника' : 'Для Артема Мунтяна'}» з історії України.</p>
+    <p className="quiz-intro">Обери, як проходити «Авторський тест №{variant}» з історії України.</p>
     <div className="test-mode-grid">
       <button type="button" className="test-mode-card" onClick={() => { resetTest(); setStartedAt(Date.now()); setMode('exam') }}><span>01 · ІСПИТ</span><strong>Перевірити себе</strong><small>Секундомір рахує час від початку до завершення тесту.</small></button>
       <button type="button" className="test-mode-card" onClick={() => { resetTest(); setStartedAt(Date.now()); setMode('practice') }}><span>02 · ТРЕНУВАННЯ</span><strong>Вчитися під час тесту</strong><small>Після фіксації кожної відповіді одразу побачиш результат і пояснення; час проходження рахується.</small></button>

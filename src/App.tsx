@@ -120,7 +120,7 @@ function App() {
 
   if (path === '/history-of-ukraine/nmt-test-2026' || path === '/history-of-ukraine/nmt-test-2026-2') {
     const variant = path.endsWith('-2') ? 2 : 1
-    const variantTitle = variant === 1 ? 'Для Артема Ситника' : 'Для Артема Мунтяна'
+    const variantTitle = variant === 1 ? 'Авторський тест №1' : 'Авторський тест №2'
     return <main className="page subject-page"><header className="subject-header">
       <a className="back-link" href="/history-of-ukraine" onClick={navigate('/history-of-ukraine')}><span aria-hidden="true">←</span> До предмета</a>
       <span className="eyebrow">ІСТОРІЯ УКРАЇНИ</span>
@@ -157,14 +157,14 @@ function App() {
             <div className="test-card-grid">
               {subject.path === '/history-of-ukraine' ? <a className="test-card test-card-practice" href={inAppTestPath} onClick={navigate(inAppTestPath)}>
                 <span className="test-card-top"><span>АВТОРСЬКИЙ ТРЕНАЖЕР</span><span aria-hidden="true">→</span></span>
-                <strong>Для Артема Ситника</strong><span>30 завдань · проходження в застосунку</span>
+                <strong>Авторський тест №1</strong><span>30 завдань · проходження в застосунку</span>
               </a> : <div className="test-card test-card-disabled" aria-disabled="true">
                 <span className="test-card-top"><span>АВТОРСЬКИЙ ТРЕНАЖЕР</span></span>
                 <strong>{subject.name}</strong><span>Тест готується</span>
               </div>}
               {subject.path === '/history-of-ukraine' && <a className="test-card test-card-practice" href="/history-of-ukraine/nmt-test-2026-2" onClick={navigate('/history-of-ukraine/nmt-test-2026-2')}>
                 <span className="test-card-top"><span>АВТОРСЬКИЙ ТРЕНАЖЕР</span><span aria-hidden="true">→</span></span>
-                <strong>Для Артема Мунтяна</strong><span>30 завдань · 20 нових тестових питань</span>
+                <strong>Авторський тест №2</strong><span>30 завдань · 20 нових тестових питань</span>
               </a>}
               {subject.path === '/history-of-ukraine' && <button type="button" className="test-card test-card-practice love-test-card" onClick={() => setLoveNoteOpen(true)}>
                 <span className="test-card-top"><span>МАЛЕНЬКИЙ СЮРПРИЗ</span><span aria-hidden="true">♡</span></span>
