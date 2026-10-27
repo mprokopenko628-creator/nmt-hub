@@ -82,18 +82,27 @@ const subjects = [
 function App() {
   const [path, setPath] = useState(window.location.pathname)
   const [subjectSection, setSubjectSection] = useState<'theory' | 'tests'>('theory')
+  const [loveNoteOpen, setLoveNoteOpen] = useState(false)
 
   useEffect(() => {
-    const handleNavigation = () => setPath(window.location.pathname)
+    const handleNavigation = () => { setPath(window.location.pathname); setLoveNoteOpen(false) }
     window.addEventListener('popstate', handleNavigation)
     return () => window.removeEventListener('popstate', handleNavigation)
   }, [])
+
+  useEffect(() => {
+    if (!loveNoteOpen) return
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') setLoveNoteOpen(false) }
+    window.addEventListener('keydown', closeOnEscape)
+    return () => window.removeEventListener('keydown', closeOnEscape)
+  }, [loveNoteOpen])
 
   const navigate = (nextPath: string) => (event: React.MouseEvent<HTMLAnchorElement>) => {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
     event.preventDefault()
     window.history.pushState({}, '', nextPath)
     setPath(nextPath)
+    setLoveNoteOpen(false)
     window.scrollTo(0, 0)
   }
 
@@ -131,7 +140,7 @@ function App() {
         <section className="subject-content" aria-labelledby="subject-title">
           <h1 id="subject-title">{subject.name}</h1>
           <div className="subject-tabs" role="tablist" aria-label="Розділи предмета">
-            <button type="button" role="tab" aria-selected={subjectSection === 'theory'} className={subjectSection === 'theory' ? 'active' : ''} onClick={() => setSubjectSection('theory')}>Теорія + практика</button>
+            <button type="button" role="tab" aria-selected={subjectSection === 'theory'} className={subjectSection === 'theory' ? 'active' : ''} onClick={() => { setSubjectSection('theory'); setLoveNoteOpen(false) }}>Теорія + практика</button>
             <button type="button" role="tab" aria-selected={subjectSection === 'tests'} className={subjectSection === 'tests' ? 'active' : ''} onClick={() => setSubjectSection('tests')}>НМТ-тести</button>
           </div>
           {subjectSection === 'theory' ? <section className="topics-section" aria-labelledby="topics-title">
@@ -157,7 +166,12 @@ function App() {
                 <span className="test-card-top"><span>АВТОРСЬКИЙ ТРЕНАЖЕР</span><span aria-hidden="true">→</span></span>
                 <strong>Для Артема Мунтяна</strong><span>30 завдань · 20 нових тестових питань</span>
               </a>}
+              {subject.path === '/history-of-ukraine' && <button type="button" className="test-card test-card-practice love-test-card" onClick={() => setLoveNoteOpen(true)}>
+                <span className="test-card-top"><span>МАЛЕНЬКИЙ СЮРПРИЗ</span><span aria-hidden="true">♡</span></span>
+                <strong>Для коханої</strong><span>Натисни, щоб відкрити</span>
+              </button>}
             </div>
+            {loveNoteOpen && <div className="love-note-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setLoveNoteOpen(false) }}><section className="love-note-card" role="dialog" aria-modal="true" aria-labelledby="love-note-title"><button className="love-note-close" type="button" onClick={() => setLoveNoteOpen(false)} aria-label="Закрити">×</button><span className="love-note-heart" aria-hidden="true">♥</span><p className="love-note-for">Для коханої</p><h2 id="love-note-title">Я тебе люблю</h2><p className="love-note-sparkle" aria-hidden="true">✦ &nbsp; ✦ &nbsp; ✦</p></section></div>}
           </section>}
         </section>
       </main>

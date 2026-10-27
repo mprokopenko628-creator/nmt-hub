@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { secondQuestions } from './historyPracticeVariantTwoData'
 
 type Choice = { kind: 'choice'; prompt: string; options: string[]; answer: number; why: string; image?: { src: string; alt: string } }
@@ -7,6 +7,12 @@ type Order = { kind: 'order'; prompt: string; events: string[]; answer: number[]
 type Pick = { kind: 'pick'; prompt: string; options: string[]; answer: number[] }
 export type Question = Choice | Match | Order | Pick
 const letters = ['А', 'Б', 'В', 'Г', 'Д']
+function formatTime(seconds: number) {
+  const hours = Math.floor(seconds / 3600)
+  const minutes = Math.floor((seconds % 3600) / 60)
+  const remainingSeconds = seconds % 60
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`
+}
 
 const firstQuestions: Question[] = [
   { kind:'choice', prompt:'Яка археологічна культура пов’язана з трипільськими протомістами?', options:['Зарубинецька','Трипільська','Черняхівська','Скіфська'], answer:1, why:'Великі поселення з характерною мальованою керамікою належали трипільській культурі.' },
@@ -51,6 +57,8 @@ export default function HistoryPracticeVariant({ variant = 1 }: { variant?: 1 | 
   const [checked, setChecked] = useState<Record<number, boolean>>({})
   const [explanationOpen, setExplanationOpen] = useState<Record<number, boolean>>({})
   const [finished, setFinished] = useState(false)
+  const [startedAt, setStartedAt] = useState<number | null>(null)
+  const [elapsedSeconds, setElapsedSeconds] = useState(0)
   const total = 54
   const scoreQuestion = (question: Question, i: number) => {
     const answer = answers[i] ?? []
@@ -98,18 +106,29 @@ export default function HistoryPracticeVariant({ variant = 1 }: { variant?: 1 | 
     next[eventIndex] = position
     return { ...current, [index]: next }
   })
-  const resetTest = () => { setAnswers({}); setChecked({}); setExplanationOpen({}); setIndex(0); setFinished(false) }
+  useEffect(() => {
+    if (mode === 'select' || finished || startedAt === null) return
+    const updateTimer = () => setElapsedSeconds(Math.floor((Date.now() - startedAt) / 1000))
+    updateTimer()
+    const timerId = window.setInterval(updateTimer, 1000)
+    return () => window.clearInterval(timerId)
+  }, [finished, mode, startedAt])
+  const resetTest = () => { setAnswers({}); setChecked({}); setExplanationOpen({}); setIndex(0); setFinished(false); setStartedAt(null); setElapsedSeconds(0) }
+  const finishTest = () => {
+    if (startedAt !== null) setElapsedSeconds(Math.floor((Date.now() - startedAt) / 1000))
+    setFinished(true)
+  }
   const earned = Math.min(200, historyScale[raw] ?? 0)
   if (mode === 'select') return <section className="notes-section quiz-section" aria-label="Вибір режиму тесту">
     <p className="quiz-intro">Обери, як проходити тест «{variant === 1 ? 'Для Артема Ситника' : 'Для Артема Мунтяна'}» з історії України.</p>
     <div className="test-mode-grid">
-      <button type="button" className="test-mode-card" onClick={() => { resetTest(); setMode('exam') }}><span>01 · ІСПИТ</span><strong>Перевірити себе</strong><small>Правильні відповіді та пояснення відкриються після завершення всіх 30 завдань.</small></button>
-      <button type="button" className="test-mode-card" onClick={() => { resetTest(); setMode('practice') }}><span>02 · ТРЕНУВАННЯ</span><strong>Вчитися під час тесту</strong><small>Після фіксації кожної відповіді одразу побачиш результат і пояснення.</small></button>
+      <button type="button" className="test-mode-card" onClick={() => { resetTest(); setStartedAt(Date.now()); setMode('exam') }}><span>01 · ІСПИТ</span><strong>Перевірити себе</strong><small>Секундомір рахує час від початку до завершення тесту.</small></button>
+      <button type="button" className="test-mode-card" onClick={() => { resetTest(); setStartedAt(Date.now()); setMode('practice') }}><span>02 · ТРЕНУВАННЯ</span><strong>Вчитися під час тесту</strong><small>Після фіксації кожної відповіді одразу побачиш результат і пояснення; час проходження рахується.</small></button>
     </div>
   </section>
   return <section className="notes-section quiz-section" aria-label="Авторський тренувальний варіант з історії України">
     <p className="quiz-intro">Авторський варіант у форматі НМТ: 20 завдань із вибором відповіді, 4 на відповідність, 3 на послідовність і 3 на вибір трьох відповідей. За правильну пару нараховується 1 бал.</p>
-    <div className="quiz-topline"><span>{mode === 'exam' ? 'Іспит' : 'Тренування'} · Завдання {index + 1} із 30</span><strong>{mode === 'exam' ? 'Результат і відповіді відкриються після завершення' : `Набрано ${raw} із ${total} тестових балів`}</strong></div>
+    <div className="quiz-topline"><span>{mode === 'exam' ? 'Іспит' : 'Тренування'} · Завдання {index + 1} із 30</span><strong><span className="practice-timer-label">Час проходження </span><time className="practice-timer" aria-label={`Час проходження ${formatTime(elapsedSeconds)}`} role="timer">{formatTime(elapsedSeconds)}</time>{mode === 'practice' && <> · Набрано {raw} із {total} тестових балів</>}</strong></div>
     {!finished ? <>
       <nav className="quiz-task-nav" aria-label="Перейти до завдання">{questions.map((_, i) => <button type="button" className={`quiz-task-number${i === index ? ' active' : ''}${isAnswered(i) ? ' answered' : ''}${mode === 'practice' && checked[i] ? (isQuestionCorrect(i) ? ' correct' : ' incorrect') : ''}`} aria-label={`Завдання ${i + 1}${checked[i] ? (isQuestionCorrect(i) ? ', правильна відповідь' : 'перевірено, є помилки') : isAnswered(i) ? ', є відповідь' : ', без відповіді'}`} onClick={() => setIndex(i)} key={i}>{i + 1}</button>)}</nav>
       <article className="quiz-current-task"><p className="quiz-task-type">Завдання {index + 1} · {question.kind === 'choice' ? 'одна відповідь' : question.kind === 'match' ? 'відповідність' : question.kind === 'order' ? 'послідовність' : 'обери три відповіді'}</p><h5>{question.prompt}</h5>
@@ -139,7 +158,7 @@ export default function HistoryPracticeVariant({ variant = 1 }: { variant?: 1 | 
         {mode === 'practice' && checked[index] && <div className={`training-feedback${isQuestionCorrect(index) ? ' correct' : ' incorrect'}`} role="status"><strong>{isQuestionCorrect(index) ? `Правильно · ${questionScores[index]} із ${maxScore(question)} балів` : `Відповідь перевірено · ${questionScores[index]} із ${maxScore(question)} балів`}</strong><div className="training-feedback-actions"><button className="quiz-explanation-button" type="button" aria-expanded={Boolean(explanationOpen[index])} onClick={() => setExplanationOpen((current) => ({ ...current, [index]: !current[index] }))}>{explanationOpen[index] ? 'Сховати пояснення' : 'Пояснення'}</button></div>{explanationOpen[index] && <p>{explanation(question)}</p>}</div>}
       </article>
       <div className="quiz-actions">{mode === 'practice' && !checked[index] && isAnswered(index) && <button className="quiz-explanation-button" type="button" onClick={() => setChecked((current) => ({ ...current, [index]: true }))}>Перевірити відповідь</button>}</div>
-      <div className="quiz-pager"><button type="button" onClick={() => setIndex((i) => Math.max(0, i - 1))} disabled={index === 0}>← Попереднє питання</button><button className="quiz-submit" type="button" onClick={() => index === 29 ? setFinished(true) : setIndex((i) => Math.min(29, i + 1))}>{index === 29 ? (mode === 'exam' ? 'Завершити іспит' : 'Завершити тренування') : 'Наступне питання →'}</button></div>
+      <div className="quiz-pager"><button type="button" onClick={() => setIndex((i) => Math.max(0, i - 1))} disabled={index === 0}>← Попереднє питання</button><button className="quiz-submit" type="button" onClick={() => index === 29 ? finishTest() : setIndex((i) => Math.min(29, i + 1))}>{index === 29 ? (mode === 'exam' ? 'Завершити іспит' : 'Завершити тренування') : 'Наступне питання →'}</button></div>
     </> : <section className="quiz-final-result" aria-live="polite"><h5>{mode === 'exam' ? 'Іспит завершено' : 'Тренування завершено'}</h5><div className="quiz-final-stats"><p><strong>{raw} / 54</strong><span>тестових балів</span></p><p><strong>{earned >= 100 ? earned : '—'}</strong><span>за шкалою 100–200</span></p><p><strong>{Object.keys(answers).filter((key) => isAnswered(Number(key))).length} / 30</strong><span>завдань із відповідями</span></p></div><h5 className="question-score-heading">Розбір відповідей</h5><div className="exam-review-list">{questions.map((item, i) => <details className="exam-review-item" key={i}><summary>Завдання {i + 1} · {questionScores[i]} із {maxScore(item)} балів</summary><p className="exam-review-prompt">{item.prompt}</p>{item.kind === 'choice' && item.image && <img className="practice-question-image" src={item.image.src} alt={item.image.alt} />}<p className="exam-review-answer">{explanation(item)}</p></details>)}</div><div className="quiz-final-actions"><button className="quiz-submit" type="button" onClick={resetTest}>Пройти наново</button><button className="quiz-explanation-button" type="button" onClick={() => setMode('select')}>Змінити режим</button></div><p className="quiz-result-note">Невідповідані завдання зараховано як неправильні. Результат нижче 9 балів не переводиться в шкалу 100–200.</p></section>}
   </section>
 }

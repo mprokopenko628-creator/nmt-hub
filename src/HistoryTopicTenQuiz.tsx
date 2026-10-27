@@ -200,24 +200,27 @@ const matchingTasks: MatchTask[] = [
 
 function makeChoiceTasks(group: StudyGroup): ChoiceTask[] {
   const links = group.links.map(([left, right]) => [left, right] as const)
-  return links.flatMap(([left, right], index) => {
-    const rotate = (values: string[]) => {
-      const shift = (index + group.title.length) % values.length
-      return values.map((_, i) => values[(i + shift) % values.length])
+  return links.flatMap(([left, right]) => {
+    const shuffle = (values: string[], prompt: string) => {
+      const seed = [...prompt].reduce((sum, char) => (sum * 33 + char.charCodeAt(0)) >>> 0, 5381)
+      const hash = (value: string) => [...value].reduce((total, char) => (total * 31 + char.charCodeAt(0) + seed) >>> 0, seed + 17)
+      return [...values].sort((a, b) => hash(a) - hash(b))
     }
-    const rightOptions = rotate(links.map((link) => link[1]))
-    const leftOptions = rotate(links.map((link) => link[0]))
+    const leftPrompt = group.askLeft.replace('{value}', left)
+    const rightPrompt = group.askRight.replace('{value}', right)
+    const rightOptions = shuffle(links.map((link) => link[1]), leftPrompt)
+    const leftOptions = shuffle(links.map((link) => link[0]), rightPrompt)
     return [
       {
         type: 'choice' as const,
-        prompt: group.askLeft.replace('{value}', left),
+        prompt: leftPrompt,
         options: rightOptions,
         correct: rightOptions.indexOf(right),
         explanation: `${left} — ${right}.`,
       },
       {
         type: 'choice' as const,
-        prompt: group.askRight.replace('{value}', right),
+        prompt: rightPrompt,
         options: leftOptions,
         correct: leftOptions.indexOf(left),
         explanation: `${right} — це ${left}.`,
@@ -242,9 +245,10 @@ function buildQuestionBank(topicId = 10): Task[] {
     return [...mc, makeMatch(index * 2), makeMatch(index * 2 + 1)]
   })
   const visualChoice = (prompt: string, options: string[], correct: number, explanation: string, src: string, alt: string): ChoiceTask => {
-    const shift = [...prompt].reduce((sum, char) => sum + char.charCodeAt(0), 0) % options.length
-    const shuffled = options.map((_, index) => options[(index + shift) % options.length])
-    return { type: 'choice', prompt, options: shuffled, correct: (correct - shift + options.length) % options.length, explanation, image: { src, alt } }
+    const seed = [...prompt].reduce((sum, char) => (sum * 33 + char.charCodeAt(0)) >>> 0, 5381)
+    const hash = (value: string) => [...value].reduce((total, char) => (total * 31 + char.charCodeAt(0) + seed) >>> 0, seed + 17)
+    const shuffled = options.map((option, originalIndex) => ({ option, originalIndex })).sort((a, b) => hash(a.option) - hash(b.option))
+    return { type: 'choice', prompt, options: shuffled.map(({ option }) => option), correct: shuffled.findIndex(({ originalIndex }) => originalIndex === correct), explanation, image: { src, alt } }
   }
   const visualQuestions: Partial<Record<number, Task>> = {
     0: visualChoice('Яке місто на картосхемі позначено як зруйноване московськими військами у 1708 р.?', ['Батурин', 'Глухів', 'Полтава', 'Бендери'], 0, 'Батурин був резиденцією Мазепи й важливою військовою базою. Його зруйнували в листопаді 1708 р.', '/images/nmt-northern-war-map.png', 'Картосхема Північної війни з позначками Батурина, Полтави та Чортомлицької Січі'),
@@ -318,6 +322,13 @@ function buildQuestionBank(topicId = 10): Task[] {
   if (topicId === 13) Object.assign(visualQuestions, {
     0: visualChoice('Яку українську землю позначено на карті як таку, що відійшла до володінь Габсбургів у 1772 р.?', ['Галичину', 'Лівобережжя', 'Крим', 'Слобожанщину'], 0, 'Після першого поділу Речі Посполитої 1772 року Галичина опинилася під владою Габсбурзької монархії. На карті важливо відрізнити її від Буковини, яка перейшла до Габсбургів пізніше.', '/images/nmt-topic11-map.jpg', 'Картосхема поділів Речі Посполитої та переходу Галичини до Габсбургів'),
   })
+  if (topicId === 29) Object.assign(visualQuestions, {
+    0: visualChoice('Яку картину Марії Приймаченко зображено?', ['«Гороховий звір»', '«Хата в Богданівці»', '«Півонії»', '«Цар Колос»'], 0, '«Гороховий звір» — програмна пам’ятка образотворчого мистецтва, створена Марією Приймаченко 1971 року.', '/images/topic29-horokhovyi-zvir.jpg', 'Картина Марії Приймаченко «Гороховий звір»'),
+    10: visualChoice('Яку пам’ятку зображено на фото?', ['Пам’ятник засновникам Києва', 'Пам’ятник княгині Ользі в Києві', 'Пам’ятник Данилу Галицькому у Львові', 'Пам’ятник Богдану Хмельницькому в Києві'], 0, 'Пам’ятник засновникам Києва (Кию, Щеку, Хориву та Либеді) створив скульптор Василь Бородай; його відкрили 1982 року.', '/images/topic29-founders-kyiv.jpg', 'Пам’ятник засновникам Києва роботи Василя Бородая'),
+    20: visualChoice('Хто зображений на фото — правозахисник і захисник прав кримських татар?', ['Петро Григоренко', 'В’ячеслав Чорновіл', 'Микола Руденко', 'Іван Дзюба'], 0, 'Петро Григоренко був правозахисником, підтримував кримськотатарський національний рух і Українську Гельсінську групу.', '/images/topic29-petro-hryhorenko.png', 'Портрет Петра Григоренка'),
+    30: visualChoice('Хто зображений на фото — автор «Лиха з розуму» й редактор «Українського вісника»?', ['В’ячеслав Чорновіл', 'Петро Григоренко', 'Валерій Марченко', 'Микола Руденко'], 0, 'В’ячеслав Чорновіл — публіцист і дисидент, укладач «Лиха з розуму» та редактор самвидавного «Українського вісника».', '/images/topic29-viacheslav-chornovil.png', 'Портрет В’ячеслава Чорновола'),
+    40: visualChoice('Якого актора та режисера українського поетичного кіно зображено?', ['Івана Миколайчука', 'Сергія Параджанова', 'Леоніда Бикова', 'Олеся Гончара'], 0, 'Іван Миколайчук — актор і режисер, відомий, зокрема, роллю у фільмі «Тіні забутих предків».', '/images/topic29-ivan-mykolaichuk.jpg', 'Портрет Івана Миколайчука'),
+  })
   if (topicId >= 3 && topicId <= 8) {
     const addVisual = (index: number, prompt: string, options: string[], correct: number, explanation: string, src: string, alt: string) => {
       visualQuestions[index] = visualChoice(prompt, options, correct, explanation, src, alt)
@@ -385,6 +396,20 @@ function buildQuestionBank(topicId = 10): Task[] {
     }
     visualQuestions[92] = chronological[topicId]
     visualQuestions[93] = multi[topicId]
+  }
+  if (topicId === 29) {
+    visualQuestions[92] = {
+      type: 'chronology', prompt: 'Розташуй події від найдавнішої до найпізнішої.',
+      events: ['Створення Української Гельсінської групи', 'Перша хвиля масових затримань дисидентів', 'Початок виходу «Українського вісника»', 'Друга хвиля масових арештів дисидентів'],
+      correct: ['Перша хвиля масових затримань дисидентів', 'Початок виходу «Українського вісника»', 'Друга хвиля масових арештів дисидентів', 'Створення Української Гельсінської групи'],
+      explanation: '1965 — перша хвиля затримань; 1970 — початок виходу «Українського вісника»; 1972 — нова хвиля арештів; 1976 — створення УГГ.',
+    }
+    visualQuestions[93] = {
+      type: 'multi', prompt: 'Вибери три твердження, що стосуються Української Гельсінської групи.',
+      options: ['Її створили 1976 року', 'Першим керівником був Микола Руденко', 'Вона документувала порушення прав людини', 'Вона була збройним підпіллям', 'Її заснували після Полтавської битви', 'Вона домагалася виконання Гельсінських угод', 'Її очолював Петро Шелест'],
+      correct: ['Її створили 1976 року', 'Першим керівником був Микола Руденко', 'Вона документувала порушення прав людини'],
+      explanation: 'УГГ виникла 1976 року під керівництвом Миколи Руденка, збирала й оприлюднювала відомості про порушення прав. Вона діяла ненасильницькими правозахисними методами й вимагала виконання Гельсінських угод.',
+    }
   }
   return bank.map((task, index) => visualQuestions[index] ?? task)
 }

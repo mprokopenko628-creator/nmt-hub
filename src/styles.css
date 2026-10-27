@@ -135,6 +135,7 @@ h1, h2, p { margin-top: 0; }
 .check-list { display: grid; gap: 9px 23px; margin: 0; padding-left: 20px; color: #c4c4c6; font-size: 13px; line-height: 1.65; }
 .check-list li::marker { color: #b5c97a; }
 .theory-block { padding: 17px 0; border-top: 1px solid #292a2f; }
+.notes-section > .theory-block:first-child { padding-top: 0; border-top: 0; }
 .theory-block h5, .person-card h5 { margin: 0 0 9px; color: #e9e8e2; font: 600 14px/1.5 'Manrope', sans-serif; }
 .theory-block p, .person-card p, .map-facts p, .section-intro, .small-note { margin: 0 0 10px; color: #bfc0c2; font-size: 13px; line-height: 1.75; }
 .theory-block p:last-child, .person-card p:last-child, .map-facts p:last-child { margin-bottom: 0; }
@@ -192,6 +193,19 @@ h1, h2, p { margin-top: 0; }
 .test-mode-card > span { color: #a7c84b; font-size: 9px; font-weight: 700; letter-spacing: .8px; }
 .test-mode-card strong { color: #e9e8e2; font: 600 17px 'Manrope', sans-serif; }
 .test-mode-card small { color: #a5a6aa; font: inherit; font-size: 11px; line-height: 1.6; }
+.love-test-card { width: 100%; font-family: inherit; text-align: left; cursor: pointer; }
+.love-test-card .test-card-top { color: #e6a4b7; }
+.love-test-card:hover { border-color: #a75d75; background: linear-gradient(145deg, #292027, #201a1e); }
+.love-note-backdrop { position: fixed; inset: 0; z-index: 1100; display: grid; place-items: center; padding: 22px; background: rgba(8, 8, 12, .82); backdrop-filter: blur(7px); }
+.love-note-card { position: relative; display: grid; justify-items: center; width: min(100%, 390px); padding: 42px 28px 32px; overflow: hidden; border: 1px solid rgba(255, 167, 188, .45); border-radius: 22px; background: radial-gradient(ellipse at 50% 0%, rgba(213, 94, 128, .2), transparent 58%), linear-gradient(145deg, #292027, #17171c 74%); box-shadow: 0 24px 90px rgba(0, 0, 0, .55), 0 0 48px rgba(239, 100, 143, .12); text-align: center; animation: love-note-appear .35s cubic-bezier(.2,.8,.2,1) both; }
+.love-note-close { position: absolute; top: 12px; right: 14px; width: 34px; height: 34px; border: 1px solid #53414a; border-radius: 50%; background: rgba(20, 18, 22, .55); color: #e8dce0; font-size: 23px; cursor: pointer; }
+.love-note-heart { color: #ff789a; font-size: 76px; line-height: 1; text-shadow: 0 0 28px rgba(255, 86, 132, .5); animation: love-heart-beat 1.25s ease-in-out infinite; }
+.love-note-for { margin: 17px 0 4px; color: #d9a8b6; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
+.love-note-card h2 { margin: 0; color: #fff1f4; font: 700 clamp(27px, 7vw, 38px)/1.2 'Manrope', sans-serif; letter-spacing: -.8px; }
+.love-note-sparkle { margin: 17px 0 0; color: #e5b1be; font-size: 13px; letter-spacing: 2px; }
+@keyframes love-note-appear { from { opacity: 0; transform: translateY(12px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes love-heart-beat { 0%, 100% { transform: scale(1); } 12% { transform: scale(1.12); } 24% { transform: scale(1); } 36% { transform: scale(1.08); } 48% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .love-note-card, .love-note-heart { animation: none; } }
 .training-feedback { margin-top: 14px; padding: 13px; border: 1px solid #45474e; border-radius: 8px; background: rgba(17,18,21,.56); }
 .training-feedback strong { color: #d4d5d7; font-size: 12px; }
 .training-feedback p { margin: 7px 0 0; color: #bfc0c2; font-size: 12px; line-height: 1.7; }
@@ -215,6 +229,9 @@ h1, h2, p { margin-top: 0; }
 .quiz-task-number.incorrect { border-color: #b64d55; background: #512a31; color: #ffd3d4; }
 .quiz-topline { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin-bottom: 12px; color: #9fa1a5; font-size: 11px; }
 .quiz-topline strong { color: #d6e6a0; font-weight: 600; }
+.practice-timer-label { color: #a5a6aa; font-weight: 500; }
+.practice-timer { min-width: 4.2em; display: inline-block; color: #e5edc8; font-variant-numeric: tabular-nums; font-weight: 700; }
+.practice-timer.is-low { color: #ff9a87; }
 .quiz-task-nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(32px, 1fr)); gap: 6px; margin-bottom: 12px; }
 .quiz-task-number { position: relative; width: 100%; min-height: 0; max-width: 44px; aspect-ratio: 1; justify-self: start; display: grid; place-items: center; padding: 0; border-radius: 6px; }
 .quiz-current-task { min-height: 260px; padding: 16px; border: 1px solid #2e3035; border-radius: 10px; background: rgba(17,18,21,.52); color: #c5c6c8; }

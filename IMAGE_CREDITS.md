@@ -2,6 +2,14 @@
 
 Файли нижче використані в конспектах. Зображення зменшено для швидшого завантаження; посилання на джерела не показуються в інтерфейсі застосунку.
 
+## Тема 29
+
+- `public/images/topic29-horokhovyi-zvir.jpg` — репродукція картини Марії Приймаченко «Гороховий звір», оригінал візуального завдання [ЗНО.Освіта, тест 19392](https://zno.osvita.ua/doc/images/znotest/193/19392/ans4_19392.jpg); використовується у тесті для впізнавання пам’ятки.
+- `public/images/topic29-ivan-mykolaichuk.jpg` — портрет Івана Миколайчука з візуального завдання [ЗНО.Освіта, тест 19387](https://zno.osvita.ua/doc/images/znotest/193/19387/21.JPG).
+- `public/images/topic29-petro-hryhorenko.png` та `public/images/topic29-viacheslav-chornovil.png` — портрети Петра Григоренка й В’ячеслава Чорновола з візуального завдання [ЗНО.Освіта, тест 22855](https://zno.osvita.ua/ukraine-history/22855/).
+- `public/images/topic29-founders-kyiv.jpg` — пам’ятник засновникам Києва з візуального завдання [ЗНО.Освіта, тест 26923](https://zno.osvita.ua/ukraine-history/26923/).
+- Джерельний тематичний банк для аналізу типів завдань: [ЗНО.Освіта — Україна в період загострення кризи радянської системи](https://zno.osvita.ua/ukraine-history/tag-ukrayina_v_period_zagostrennya_krizi_radyanskoyi_sistemi/). Завдання в застосунку сформульовано самостійно.
+
 ## Теми 1–5
 
 - `public/images/early-history/mizyn-bracelet.jpg`, `trypillian-ceramics.jpg`, `scythian-pectoral.jpg`, `solokha-comb.jpg`, `chersonesus.jpg`, `zbruch-idol.jpg` — навчальна добірка програмних пам’яток стародавньої історії на [Освіта.UA](https://osvita.ua/test/training/history/60197/); збережені локальні копії для показу в застосунку.
