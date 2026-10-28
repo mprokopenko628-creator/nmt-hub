@@ -100,12 +100,15 @@ h1, h2, p { margin-top: 0; }
 .history-program-section.all-read .history-section-mastery { color: #c5d7a2; }
 .history-section-count { margin-left: auto; color: #929399; font: 500 10px 'DM Sans', sans-serif; white-space: nowrap; }
 .history-section-topics { display: grid; gap: 7px; margin: 0; padding: 0 10px 10px; list-style: none; }
+.history-topic-card { overflow: hidden; border: 1px solid #292a2f; border-radius: 8px; background: #17181b; }
+.history-topic-card.is-expanded { border-color: #596b3b; background: #191c18; }
 .history-topic-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 12px; padding: 12px; border: 1px solid #292a2f; border-radius: 8px; background: #17181b; transition: border-color .16s ease, background .16s ease; }
+.history-topic-card .history-topic-row { border: 0; border-radius: 0; background: transparent; }
 .history-topic-row:hover, .history-topic-row:focus-visible { border-color: #6f8043; background: #1e201b; outline: none; }
 .history-topic-expand { display: flex; align-items: center; gap: 10px; width: 100%; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
 .history-topic-expand > span:nth-child(2) { flex: 1; }
 .history-topic-expand-icon { margin-left: auto; color: var(--lime); font-size: 18px; font-weight: 400; }
-.history-subtopics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 8px 0 0 32px; }
+.history-subtopics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0 12px 12px 44px; }
 .history-subtopic-link { display: grid; align-content: start; gap: 6px; padding: 13px; border: 1px solid #3b4430; border-radius: 8px; background: rgba(181,201,122,.07); color: #bfc0c2; text-decoration: none; transition: border-color .16s ease, background .16s ease; }
 .history-subtopic-link:hover { border-color: #81944a; background: rgba(181,201,122,.14); }
 .history-subtopic-label { color: #a8bd65; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; }
@@ -435,7 +438,7 @@ h1, h2, p { margin-top: 0; }
   .test-card-grid { grid-template-columns: 1fr; }
   .topic-list { grid-template-columns: 1fr; }
   .history-topic-row { grid-template-columns: 1fr; gap: 8px; }
-  .history-subtopics { grid-template-columns: 1fr; margin-left: 0; }
+  .history-subtopics { grid-template-columns: 1fr; margin-left: 0; padding: 0 10px 10px 12px; }
   .history-topic-meta { align-items: flex-start; flex-direction: row; flex-wrap: wrap; gap: 6px 12px; padding-left: 32px; white-space: normal; }
   .history-topic-actions { padding-left: 32px; }
   .history-program-section > summary { flex-wrap: wrap; gap: 5px 12px; }

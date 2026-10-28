@@ -99,6 +99,7 @@ export function HistoryTopicCatalog({ topics }: { topics: readonly string[] }) {
             const testAvailable = id >= 1 && id <= 32
             const mistakes = mistakeCounts[id - 1]
             return <li key={id}>
+              <div className={`history-topic-card${id === 18 && expandedTopicId === id ? ' is-expanded' : ''}`}>
               <div className="history-topic-row">
                 {id === 18 ? <button type="button" className="history-topic-title history-topic-title-link history-topic-expand" aria-expanded={expandedTopicId === id} onClick={() => setExpandedTopicId((current) => current === id ? null : id)}>
                   <span className="history-topic-number">{String(id).padStart(2, '0')}</span><span>{topics[id - 1]}</span><span className="history-topic-expand-icon" aria-hidden="true">{expandedTopicId === id ? '−' : '+'}</span>
@@ -119,6 +120,7 @@ export function HistoryTopicCatalog({ topics }: { topics: readonly string[] }) {
                   <span className="history-subtopic-label">{subtopic.label}</span><strong>{subtopic.title}</strong><span>{subtopic.summary}</span><em>Відкрити підтему →</em>
                 </a>)}
               </div>}
+              </div>
             </li>
           })}
         </ol>
