@@ -86,28 +86,46 @@ const documentVisual = {
 
 const progressKey = 'nmt-hub:history:topic:18:subtopics'
 
-export default function HistoryTopicEighteen() {
-  const [activeId, setActiveId] = useState(() => window.location.hash.slice(1) || subtopics[0].id)
+export default function HistoryTopicEighteen({ subtopicId }: { subtopicId?: string }) {
   const [completed, setCompleted] = useState<Record<string, boolean>>(() => {
     try { return JSON.parse(localStorage.getItem(progressKey) || '{}') } catch { return {} }
   })
   const [answers, setAnswers] = useState<Record<string, number | null>>({})
-  const active = subtopics.find((item) => item.id === activeId) ?? subtopics[0]
+  const active = subtopics.find((item) => item.id === subtopicId) ?? subtopics[0]
   const completedCount = Object.values(completed).filter(Boolean).length
   const activeIndex = subtopics.findIndex((item) => item.id === active.id)
   const score = useMemo(() => active.questions.reduce((total, question, index) => total + (answers[`${active.id}-${index}`] === question.correct ? 1 : 0), 0), [active, answers])
-
-  const selectSubtopic = (id: string) => {
-    setActiveId(id)
-    window.history.replaceState({}, '', `${window.location.pathname}#${id}`)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
 
   const toggleComplete = () => {
     const next = { ...completed, [active.id]: !completed[active.id] }
     setCompleted(next)
     localStorage.setItem(progressKey, JSON.stringify(next))
   }
+
+  if (!subtopicId) return <article className="topic-notes topic-eighteen" aria-labelledby="topic-eighteen-title">
+    <header className="notes-header topic-eighteen-header">
+      <p className="eyebrow">ТЕМА 18 · КАТАЛОГ ПІДТЕМ</p>
+      <h3 id="topic-eighteen-title">Українські землі у складі Російської імперії в 1900–1914 рр.</h3>
+      <p>Тема поділена на дві окремі підтеми. Відкрий потрібну картку, опрацюй теорію, візуальне джерело та самоперевірку, а потім познач підтему завершеною.</p>
+    </header>
+    <section className="topic-subtopic-navigation" aria-label="Навігація підтеми теми 18">
+      <div className="subtopic-progress-label"><span>Прогрес теми</span><strong>{completedCount} із {subtopics.length} підтем</strong></div>
+      <div className="subtopic-progress-track"><span style={{ width: `${completedCount * 50}%` }} /></div>
+      <div className="subtopic-directory">
+        {subtopics.map((item, index) => <a className="subtopic-directory-card" key={item.id} href={`/history-of-ukraine/topic-18/${item.id}`}>
+          <span className="eyebrow">{item.label}</span>
+          <h4>{index + 1}. {item.title}</h4>
+          <p>{item.summary}</p>
+          <strong>{completed[item.id] ? '✓ Опрацьовано · Відкрити знову' : 'Відкрити підтему →'}</strong>
+        </a>)}
+      </div>
+    </section>
+    <section className="notes-section">
+      <h4>Маршрут підготовки</h4>
+      <ol className="check-list"><li>Модернізація, партії та революція 1905–1907 рр.</li><li>Реакція, Державні думи та Столипінська реформа 1907–1914 рр.</li><li>Після двох підтем — повний тест теми 18.</li></ol>
+      <a className="subtopic-next" href="/history-of-ukraine/topic-18/test">Перейти до повного тесту теми →</a>
+    </section>
+  </article>
 
   return <article className="topic-notes topic-eighteen" aria-labelledby="topic-eighteen-title">
     <header className="notes-header topic-eighteen-header">
@@ -116,13 +134,14 @@ export default function HistoryTopicEighteen() {
       <p>Наддніпрянська Україна входила в добу монополізації, революційної лібералізації та політизації українського руху, а після 1907 року — у період реакції й обмежених реформ. Опрацьовуй тему послідовно: спочатку модернізацію та революцію, потім реакцію, парламент і Столипінську реформу.</p>
     </header>
 
-    <section className="topic-subtopic-navigation" aria-label="Підтеми теми 18">
+    <p className="subtopic-back-link"><a href="/history-of-ukraine/topic-18">← До каталогу підтеми</a></p>
+    <section className="topic-subtopic-navigation" aria-label="Переходи між підтеми теми 18">
       <div className="subtopic-progress-label"><span>Прогрес підтеми</span><strong>{completedCount} із {subtopics.length}</strong></div>
       <div className="subtopic-progress-track"><span style={{ width: `${completedCount * 50}%` }} /></div>
       <div className="subtopic-tabs">
-        {subtopics.map((item, index) => <button type="button" className={item.id === active.id ? 'active' : ''} key={item.id} onClick={() => selectSubtopic(item.id)}>
+        {subtopics.map((item, index) => <a className={item.id === active.id ? 'active' : ''} key={item.id} href={`/history-of-ukraine/topic-18/${item.id}`}>
           <span>{item.label}</span><strong>{index + 1}. {item.title}</strong><small>{completed[item.id] ? 'Опрацьовано' : 'Не завершено'}</small>
-        </button>)}
+        </a>)}
       </div>
     </section>
 
@@ -157,6 +176,6 @@ export default function HistoryTopicEighteen() {
       return <article className="subtopic-question" key={key}><h5>{index + 1}. {question.prompt}</h5><div className="subtopic-options">{question.options.map((option, optionIndex) => <button type="button" className={answer === optionIndex ? (answer === question.correct ? 'correct' : 'wrong') : ''} key={option} onClick={() => setAnswers((current) => ({ ...current, [key]: optionIndex }))}>{String.fromCharCode(65 + optionIndex)}. {option}</button>)}</div>{answer !== undefined && answer !== null && <p className={answer === question.correct ? 'answer-feedback correct' : 'answer-feedback wrong'}>{answer === question.correct ? 'Правильно.' : 'Перевір ще раз.'} {question.explanation}</p>}</article>
     })}<p className="quiz-score">Результат: <strong>{score} / {active.questions.length}</strong></p></section>
 
-    <footer className="subtopic-footer"><button type="button" className={completed[active.id] ? 'subtopic-complete completed' : 'subtopic-complete'} onClick={toggleComplete}>{completed[active.id] ? '✓ Підтему опрацьовано' : 'Позначити підтему опрацьованою'}</button>{activeIndex < subtopics.length - 1 ? <button type="button" className="subtopic-next" onClick={() => selectSubtopic(subtopics[activeIndex + 1].id)}>Далі: {subtopics[activeIndex + 1].title} →</button> : <a className="subtopic-next" href="/history-of-ukraine/topic-18/test">Перейти до повного тесту теми →</a>}</footer>
+    <footer className="subtopic-footer"><button type="button" className={completed[active.id] ? 'subtopic-complete completed' : 'subtopic-complete'} onClick={toggleComplete}>{completed[active.id] ? '✓ Підтему опрацьовано' : 'Позначити підтему опрацьованою'}</button>{activeIndex < subtopics.length - 1 ? <a className="subtopic-next" href={`/history-of-ukraine/topic-18/${subtopics[activeIndex + 1].id}`}>Далі: {subtopics[activeIndex + 1].title} →</a> : <a className="subtopic-next" href="/history-of-ukraine/topic-18/test">Перейти до повного тесту теми →</a>}</footer>
   </article>
 }

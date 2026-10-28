@@ -368,10 +368,19 @@ h1, h2, p { margin-top: 0; }
 .subtopic-progress-track { height: 5px; margin: 9px 0 14px; overflow: hidden; border-radius: 99px; background: #292a2f; }
 .subtopic-progress-track span { display: block; height: 100%; border-radius: inherit; background: var(--lime); transition: width .2s ease; }
 .subtopic-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
-.subtopic-tabs button { display: grid; gap: 5px; min-height: 92px; padding: 13px; border: 1px solid #34363c; border-radius: 9px; background: #191a1e; color: #bfc0c2; text-align: left; cursor: pointer; }
-.subtopic-tabs button:hover, .subtopic-tabs button.active { border-color: #81944a; background: rgba(181,201,122,.12); color: #e4f1bd; }
+.subtopic-tabs a { display: grid; gap: 5px; min-height: 92px; padding: 13px; border: 1px solid #34363c; border-radius: 9px; background: #191a1e; color: #bfc0c2; text-align: left; text-decoration: none; }
+.subtopic-tabs a:hover, .subtopic-tabs a.active { border-color: #81944a; background: rgba(181,201,122,.12); color: #e4f1bd; }
 .subtopic-tabs span, .subtopic-tabs small { color: #929399; font-size: 10px; }
-.subtopic-tabs button.active span, .subtopic-tabs button.active small { color: #c8df84; }
+.subtopic-tabs a.active span, .subtopic-tabs a.active small { color: #c8df84; }
+.subtopic-directory { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+.subtopic-directory-card { display: grid; align-content: start; gap: 9px; min-height: 220px; padding: 18px; border: 1px solid #34363c; border-radius: 10px; background: #191a1e; color: #c8c9cb; text-decoration: none; transition: border-color .16s ease, background .16s ease, transform .16s ease; }
+.subtopic-directory-card:hover { border-color: #81944a; background: rgba(181,201,122,.1); transform: translateY(-2px); }
+.subtopic-directory-card .eyebrow { margin: 0; color: #a8bd65; }
+.subtopic-directory-card h4 { margin: 0; color: #eeeeda; font: 600 16px/1.4 'Manrope', sans-serif; }
+.subtopic-directory-card p { margin: 0; color: #aeb0b3; font-size: 12px; line-height: 1.65; }
+.subtopic-directory-card > strong { margin-top: auto; color: #d6e6a0; font-size: 11px; }
+.subtopic-back-link { margin: 20px 0 0; font-size: 12px; }
+.subtopic-back-link a { color: #cfe48e; }
 .subtopic-tabs strong { font: 600 13px/1.45 'Manrope', sans-serif; }
 .subtopic-heading { margin-top: 28px; padding: 18px; border-left: 3px solid var(--lime); background: rgba(181,201,122,.06); }
 .subtopic-heading .eyebrow { margin: 0 0 7px; }
@@ -447,6 +456,7 @@ h1, h2, p { margin-top: 0; }
   .test-mode-grid { grid-template-columns: 1fr; }
   .term-row { grid-template-columns: 1fr; gap: 5px; }
   .subtopic-tabs, .map-reading-grid { grid-template-columns: 1fr; }
+  .subtopic-directory { grid-template-columns: 1fr; }
   .subtopic-footer { align-items: stretch; }
   .subtopic-complete, .subtopic-next { width: 100%; text-align: center; }
 }
