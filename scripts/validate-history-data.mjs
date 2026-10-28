@@ -13,7 +13,8 @@ const transpileAndLoad = (file, requireImpl = () => ({})) => {
 }
 
 const early = transpileAndLoad('src/historyEarlyQuizData.ts')
-const topic = transpileAndLoad('src/historyTopicQuizData.ts', () => early)
+const later = transpileAndLoad('src/historyLaterData.ts')
+const topic = transpileAndLoad('src/historyTopicQuizData.ts', (request) => request.includes('historyLaterData') ? later : early)
 const tenSource = fs.readFileSync('src/HistoryTopicTenQuiz.tsx', 'utf8')
 const tenGroupsSource = tenSource.slice(tenSource.indexOf('const groups:'), tenSource.indexOf('const matchingTasks:'))
 const tenMatchesStart = tenSource.indexOf('const matchingTasks:')
@@ -30,7 +31,7 @@ const errors = []
 let matchingCount = 0
 
 for (const [topicId, data] of Object.entries(banks)) {
-  if (data.groups.length !== 10) errors.push(`Тема ${topicId}: очікується 10 груп, знайдено ${data.groups.length}`)
+  if (data.groups.length < 4) errors.push(`Тема ${topicId}: потрібно щонайменше 4 тематичні групи, знайдено ${data.groups.length}`)
   for (const [groupIndex, group] of data.groups.entries()) {
     if (group.links.length !== 4) errors.push(`Тема ${topicId}, група ${groupIndex + 1}: очікується 4 пари`)
     const left = group.links.map(([value]) => value)

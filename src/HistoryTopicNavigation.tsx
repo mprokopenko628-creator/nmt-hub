@@ -6,8 +6,10 @@ import HistoryTopicsOneToFive from './HistoryTopicsOneToFive'
 import HistoryTopicsOneTwoFresh from './HistoryTopicsOneTwoFresh'
 import HistoryTopicsSixToEight from './HistoryTopicsSixToEight'
 import HistoryTopicsTwelveToFourteen from './HistoryTopicsTwelveToFourteen'
+import HistoryTopicTwelve from './HistoryTopicTwelve'
 import HistoryTopicTenQuiz, { historyTopicMistakesKey } from './HistoryTopicTenQuiz'
 import HistoryTopicTwentyNine from './HistoryTopicTwentyNine'
+import HistoryTopicsLater from './HistoryTopicsLater'
 
 export const historyProgramSections = [
   { title: 'Вступ і стародавня історія України', topics: [1, 2] },
@@ -92,7 +94,7 @@ export function HistoryTopicCatalog({ topics }: { topics: readonly string[] }) {
         </summary>
         <ol className="history-section-topics">
           {section.topics.map((id) => {
-            const testAvailable = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 29].includes(id)
+            const testAvailable = id >= 1 && id <= 32
             const mistakes = mistakeCounts[id - 1]
             return <li key={id}>
               <div className="history-topic-row">
@@ -167,7 +169,7 @@ export function HistoryTopicPage({ topicId, title }: { topicId: number; title: s
     <section className="subject-content">
       <h1>{title}</h1>
       <div className="topic-progress-strip"><span className={read ? 'topic-status is-read' : 'topic-status'}>{read ? 'Прочитана' : 'Не прочитана'}</span><span>Тест пройдено: <strong>{progress}%</strong></span></div>
-      {topicId >= 1 && topicId <= 2 ? <HistoryTopicsOneTwoFresh topicId={topicId} /> : topicId >= 3 && topicId <= 5 ? <HistoryTopicsOneToFive topicId={topicId} /> : topicId >= 6 && topicId <= 8 ? <HistoryTopicsSixToEight topicId={topicId} /> : topicId >= 12 && topicId <= 14 ? <HistoryTopicsTwelveToFourteen topicId={topicId} /> : topicId === 9 ? <HistoryTopicNine /> : topicId === 10 ? <HistoryTopicTen /> : topicId === 11 ? <HistoryTopicEleven /> : topicId === 29 ? <HistoryTopicTwentyNine /> : <section className="topic-notes topic-placeholder"><h2>Матеріали теми</h2><p>Матеріали цієї теми ще не додані.</p></section>}
+      {topicId >= 1 && topicId <= 2 ? <HistoryTopicsOneTwoFresh topicId={topicId} /> : topicId >= 3 && topicId <= 5 ? <HistoryTopicsOneToFive topicId={topicId} /> : topicId >= 6 && topicId <= 8 ? <HistoryTopicsSixToEight topicId={topicId} /> : topicId === 12 ? <HistoryTopicTwelve /> : topicId >= 13 && topicId <= 14 ? <HistoryTopicsTwelveToFourteen topicId={topicId} /> : topicId === 9 ? <HistoryTopicNine /> : topicId === 10 ? <HistoryTopicTen /> : topicId === 11 ? <HistoryTopicEleven /> : topicId === 29 ? <HistoryTopicTwentyNine /> : topicId >= 15 && topicId <= 28 ? <HistoryTopicsLater topicId={topicId} /> : topicId >= 30 && topicId <= 32 ? <HistoryTopicsLater topicId={topicId} /> : <section className="topic-notes topic-placeholder"><h2>Матеріали теми</h2><p>Матеріали цієї теми ще не додані.</p></section>}
     </section>
     <nav className={`topic-action-bar${actionsVisible ? '' : ' is-hidden'}`} aria-label="Дії з темою">
       <a href="/history-of-ukraine" aria-label="Повернутися до всіх тем" title="До всіх тем"><ActionIcon name="list" /></a>
@@ -186,7 +188,7 @@ export function HistoryTopicTestPage({ topicId, title, mode = 'test' }: { topicI
       <span className="eyebrow">{mode === 'mistakes' ? 'РОБОТА НАД ПОМИЛКАМИ' : 'ТЕСТ'} · ТЕМА {String(topicId).padStart(2, '0')}</span>
     </header>
     <section className="subject-content"><h1>Тест: {title}</h1>
-      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 29].includes(topicId) ? <HistoryTopicTenQuiz key={`${topicId}-${mode}`} topicId={topicId} mode={mode} /> : <section className="topic-notes topic-placeholder"><p>Тест для цієї теми ще не додано.</p></section>}
+      {((topicId >= 1 && topicId <= 14) || (topicId >= 15 && topicId <= 28) || (topicId >= 29 && topicId <= 32)) ? <HistoryTopicTenQuiz key={`${topicId}-${mode}`} topicId={topicId} mode={mode} /> : <section className="topic-notes topic-placeholder"><p>Тест для цієї теми ще не додано.</p></section>}
     </section>
   </main>
 }

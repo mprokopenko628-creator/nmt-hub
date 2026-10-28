@@ -2,6 +2,11 @@
 
 Файли нижче використані в конспектах. Зображення зменшено для швидшого завантаження; посилання на джерела не показуються в інтерфейсі застосунку.
 
+## Тема 12
+
+- `public/images/topic12-governorates.jpg` — карта адміністративно-територіального поділу українських земель у складі Російської імперії наприкінці XVIII — у першій половині XIX ст. Вона показує дев’ять губерній, Бессарабську область та генерал-губернаторства; збережена з [навчальної презентації НМТ-теми 12 на «На Урок»](https://naurok.com.ua/ukra-nski-zemli-u-skladi-rosiysko-imperi-naprikinci-xviii---v-pershiy-polovini-xix-st-prezentaciya-pidgotovka-do-zno-z-istori-ukra-ni-tema-12-324464.html). Карту не редагували.
+- `public/images/topic12-brotherhood.jpg` — портрети Миколи Костомарова, Пантелеймона Куліша й Тараса Шевченка з [оригінального тематичного завдання ЗНО.Освіта](https://zno.osvita.ua/ukraine-history/tag-ukrayinski_zemli_v_rosijskij_imperiyi_kincja_khviii_pershoyi_polovyny_khikh_st/); використано для вправи на впізнавання діячів Кирило-Мефодіївського братства.
+
 ## Тема 29
 
 - `public/images/topic29-horokhovyi-zvir.jpg` — репродукція картини Марії Приймаченко «Гороховий звір», оригінал візуального завдання [ЗНО.Освіта, тест 19392](https://zno.osvita.ua/doc/images/znotest/193/19392/ans4_19392.jpg); використовується у тесті для впізнавання пам’ятки.
