@@ -96,3 +96,8 @@
 - `public/images/portrait-kyrylo-rozumovsky.jpg` — [портрет Кирила Розумовського роботи Помпео Батоні (1766)](https://commons.wikimedia.org/wiki/File:Kyrylo_Rozumovsky_(Portrait,_1766,_Pompeo_Batoni).jpg), Wikimedia Commons, картина XVIII ст.
 - `public/images/portrait-hryhorii-skovoroda.jpg` — [портрет Григорія Сковороди](https://commons.wikimedia.org/wiki/File:Hryhoriy_Skovoroda.jpg), невідомий автор, суспільне надбання.
 - `public/images/topic11-pinzel-st-george.jpg` — [скульптурна група Святого Юрія змієборця](https://commons.wikimedia.org/wiki/File:Lwow_Katedra_Jura_351-31.jpg), Wikimedia Commons.
+
+## Тема 18: українські землі у складі Російської імперії в 1900–1914 рр.
+
+- Візуал у компоненті `HistoryTopicEighteen.tsx`: картосхема економічної спеціалізації українських земель, [ЗНО.Освіта.UA, завдання 8940](https://zno.osvita.ua/doc/images/znotest/89/8940/23.jpg), контекст і тематична сторінка — [банк теми 1900–1914 рр.](https://zno.osvita.ua/ukraine-history/tag-ukrayinski_zemli_v_rosijskij_imperiyi_19001914_rr/).
+- Візуал у компоненті `HistoryTopicEighteen.tsx`: фото українських періодичних видань початку ХХ ст., [ЗНО.Освіта.UA, тематичне завдання](https://zno.osvita.ua/doc/images/znotest/207/20704/52.JPG). Використано як джерело формату завдання ЗНО-ОНЛАЙН, не як офіційний матеріал УЦОЯО.
