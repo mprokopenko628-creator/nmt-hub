@@ -132,29 +132,8 @@ export function HistoryTopicCatalog({ topics }: { topics: readonly string[] }) {
 export function HistoryTopicPage({ topicId, title, subtopicId }: { topicId: number; title: string; subtopicId?: string }) {
   const [read, setRead] = useState(() => localStorage.getItem(readKey(topicId)) === 'true')
   const [progress, setProgress] = useState(() => Number(localStorage.getItem(progressKey(topicId)) || 0))
-  const [actionsVisible, setActionsVisible] = useState(true)
   const previousId = Math.max(topicId - 1, 1)
   const nextId = Math.min(topicId + 1, 32)
-  const previousTitle = topicId === 1 ? 'Всі теми' : 'Попередня тема'
-  const nextTitle = nextId === topicId ? 'Всі теми' : 'Наступна тема'
-
-  useEffect(() => {
-    let hideTimer = 0
-    const scheduleHide = () => {
-      window.clearTimeout(hideTimer)
-      hideTimer = window.setTimeout(() => setActionsVisible(false), 2800)
-    }
-    const revealOnScroll = () => {
-      setActionsVisible(true)
-      scheduleHide()
-    }
-    scheduleHide()
-    window.addEventListener('scroll', revealOnScroll, { passive: true })
-    return () => {
-      window.clearTimeout(hideTimer)
-      window.removeEventListener('scroll', revealOnScroll)
-    }
-  }, [])
 
   useEffect(() => {
     const refresh = () => setProgress(Number(localStorage.getItem(progressKey(topicId)) || 0))
@@ -182,12 +161,12 @@ export function HistoryTopicPage({ topicId, title, subtopicId }: { topicId: numb
       <div className="topic-progress-strip"><span className={read ? 'topic-status is-read' : 'topic-status'}>{read ? 'Прочитана' : 'Не прочитана'}</span><span>Тест пройдено: <strong>{progress}%</strong></span></div>
       {topicId >= 1 && topicId <= 2 ? <HistoryTopicsOneTwoFresh topicId={topicId} /> : topicId >= 3 && topicId <= 5 ? <HistoryTopicsOneToFive topicId={topicId} /> : topicId >= 6 && topicId <= 8 ? <HistoryTopicsSixToEight topicId={topicId} /> : topicId === 12 ? <HistoryTopicTwelve /> : topicId >= 13 && topicId <= 14 ? <HistoryTopicsTwelveToFourteen topicId={topicId} /> : topicId === 9 ? <HistoryTopicNine /> : topicId === 10 ? <HistoryTopicTen /> : topicId === 11 ? <HistoryTopicEleven /> : topicId === 18 ? <HistoryTopicEighteen subtopicId={subtopicId} /> : topicId === 29 ? <HistoryTopicTwentyNine /> : topicId >= 15 && topicId <= 28 ? <HistoryTopicsLater topicId={topicId} /> : topicId >= 30 && topicId <= 32 ? <HistoryTopicsLater topicId={topicId} /> : <section className="topic-notes topic-placeholder"><h2>Матеріали теми</h2><p>Матеріали цієї теми ще не додані.</p></section>}
     </section>
-    <nav className={`topic-action-bar${actionsVisible ? '' : ' is-hidden'}`} aria-label="Дії з темою">
-      <a href="/history-of-ukraine" aria-label="Повернутися до всіх тем" title="До всіх тем"><ActionIcon name="list" /></a>
-      <a href={topicId === 1 ? '/history-of-ukraine' : `/history-of-ukraine/topic-${previousId}`} aria-label={topicId === 1 ? 'Повернутися до всіх тем' : `Перейти до теми ${previousId}`} title={previousTitle}><ActionIcon name="prev" /></a>
-      <a href={nextId === topicId ? '/history-of-ukraine' : `/history-of-ukraine/topic-${nextId}`} aria-label={nextId === topicId ? 'Повернутися до всіх тем' : `Перейти до теми ${nextId}`} title={nextTitle}><ActionIcon name="next" /></a>
-      <a href={`/history-of-ukraine/topic-${topicId}/test`} aria-label="Перейти до тестів цієї теми" title="Тести"><ActionIcon name="test" /></a>
-      <button type="button" className={read ? 'marked-read' : ''} onClick={toggleRead} aria-label={read ? 'Зняти позначку прочитаної теми' : 'Позначити тему прочитаною'} title={read ? 'Тему позначено прочитаною' : 'Позначити прочитаною'}><ActionIcon name={read ? 'check' : 'circle'} /></button>
+    <nav className="topic-action-bar" aria-label="Навігація та дії з темою">
+      <a href="/history-of-ukraine" aria-label="Повернутися до всіх тем"><ActionIcon name="list" /><span>Всі теми</span></a>
+      <a href={topicId === 1 ? '/history-of-ukraine' : `/history-of-ukraine/topic-${previousId}`} aria-label={topicId === 1 ? 'Повернутися до всіх тем' : `Перейти до теми ${previousId}`}><ActionIcon name="prev" /><span>{topicId === 1 ? 'Розділи' : 'Попередня'}</span></a>
+      <a href={nextId === topicId ? '/history-of-ukraine' : `/history-of-ukraine/topic-${nextId}`} aria-label={nextId === topicId ? 'Повернутися до всіх тем' : `Перейти до теми ${nextId}`}><ActionIcon name="next" /><span>{nextId === topicId ? 'Розділи' : 'Наступна'}</span></a>
+      <a href={`/history-of-ukraine/topic-${topicId}/test`} aria-label="Перейти до тестів цієї теми"><ActionIcon name="test" /><span>Тести</span></a>
+      <button type="button" className={read ? 'marked-read' : ''} onClick={toggleRead} aria-label={read ? 'Зняти позначку прочитаної теми' : 'Позначити тему прочитаною'}><ActionIcon name={read ? 'check' : 'circle'} /><span>{read ? 'Прочитано' : 'Позначити'}</span></button>
     </nav>
   </main>
 }
