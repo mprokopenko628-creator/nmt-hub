@@ -137,16 +137,6 @@ export default function HistoryTopicEighteen({ subtopicId }: { subtopicId?: stri
     </header>
 
     <p className="subtopic-back-link"><a href="/history-of-ukraine/topic-18">← До каталогу підтеми</a></p>
-    <section className="topic-subtopic-navigation" aria-label="Переходи між підтеми теми 18">
-      <div className="subtopic-progress-label"><span>Прогрес підтеми</span><strong>{completedCount} із {subtopics.length}</strong></div>
-      <div className="subtopic-progress-track"><span style={{ width: `${completedCount * 50}%` }} /></div>
-      <div className="subtopic-tabs">
-        {subtopics.map((item, index) => <a className={item.id === active.id ? 'active' : ''} key={item.id} href={`/history-of-ukraine/topic-18/${item.id}`}>
-          <span>{item.label}</span><strong>{index + 1}. {item.title}</strong><small>{completed[item.id] ? 'Опрацьовано' : 'Не завершено'}</small>
-        </a>)}
-      </div>
-    </section>
-
     <section id={active.id} className="subtopic-content" aria-labelledby={`${active.id}-title`}>
       <div className="subtopic-heading"><span className="eyebrow">{active.label}</span><h4 id={`${active.id}-title`}>{active.title}</h4><p>{active.summary}</p></div>
       <div className="topic-eighteen-theory">{active.sections.map(([heading, text]) => <div className="theory-block" key={heading}><h5>{heading}</h5><p>{text}</p></div>)}</div>
