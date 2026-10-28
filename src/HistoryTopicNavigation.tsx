@@ -10,7 +10,7 @@ import HistoryTopicTwelve from './HistoryTopicTwelve'
 import HistoryTopicTenQuiz, { historyTopicMistakesKey } from './HistoryTopicTenQuiz'
 import HistoryTopicTwentyNine from './HistoryTopicTwentyNine'
 import HistoryTopicsLater from './HistoryTopicsLater'
-import HistoryTopicEighteen from './HistoryTopicEighteen'
+import HistoryTopicEighteen, { historyTopicEighteenSubtopics } from './HistoryTopicEighteen'
 
 export const historyProgramSections = [
   { title: 'Вступ і стародавня історія України', topics: [1, 2] },
@@ -66,6 +66,7 @@ export function HistoryTopicCatalog({ topics }: { topics: readonly string[] }) {
   const [progress, setProgress] = useState(() => readTestProgress(topics.length))
   const [mastery, setMastery] = useState(() => readMastery(topics.length))
   const [mistakeCounts, setMistakeCounts] = useState(() => topics.map((_, index) => readTopicMistakeCount(index + 1)))
+  const [expandedTopicId, setExpandedTopicId] = useState<number | null>(null)
 
   useEffect(() => {
     const refresh = () => {
@@ -99,9 +100,11 @@ export function HistoryTopicCatalog({ topics }: { topics: readonly string[] }) {
             const mistakes = mistakeCounts[id - 1]
             return <li key={id}>
               <div className="history-topic-row">
-                <a className="history-topic-title history-topic-title-link" href={`/history-of-ukraine/topic-${id}`}>
+                {id === 18 ? <button type="button" className="history-topic-title history-topic-title-link history-topic-expand" aria-expanded={expandedTopicId === id} onClick={() => setExpandedTopicId((current) => current === id ? null : id)}>
+                  <span className="history-topic-number">{String(id).padStart(2, '0')}</span><span>{topics[id - 1]}</span><span className="history-topic-expand-icon" aria-hidden="true">{expandedTopicId === id ? '−' : '+'}</span>
+                </button> : <a className="history-topic-title history-topic-title-link" href={`/history-of-ukraine/topic-${id}`}>
                   <span className="history-topic-number">{String(id).padStart(2, '0')}</span>{topics[id - 1]}
-                </a>
+                </a>}
                 <span className="history-topic-meta">
                   <span className={read[id - 1] ? 'topic-status is-read' : 'topic-status'}>{read[id - 1] ? 'Прочитана' : 'Не прочитана'}</span>
                   {testAvailable && <span className="topic-test-progress">Пройдено: {progress[id - 1]}% · результат: {mastery[id - 1] === null ? '—' : `${mastery[id - 1]}%`}</span>}
@@ -111,6 +114,11 @@ export function HistoryTopicCatalog({ topics }: { topics: readonly string[] }) {
                   {testAvailable && mistakes > 0 ? <a className="topic-mistake-link" href={`/history-of-ukraine/topic-${id}/mistakes`}>Помилки · {mistakes}</a> : <span className="topic-action-unavailable">Помилки · 0</span>}
                 </span>
               </div>
+              {id === 18 && expandedTopicId === id && <div className="history-subtopics" aria-label="Підтеми теми 18">
+                {historyTopicEighteenSubtopics.map((subtopic) => <a className="history-subtopic-link" key={subtopic.id} href={`/history-of-ukraine/topic-18/${subtopic.id}`}>
+                  <span className="history-subtopic-label">{subtopic.label}</span><strong>{subtopic.title}</strong><span>{subtopic.summary}</span><em>Відкрити підтему →</em>
+                </a>)}
+              </div>}
             </li>
           })}
         </ol>

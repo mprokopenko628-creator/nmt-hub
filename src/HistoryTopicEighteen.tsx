@@ -70,6 +70,8 @@ const subtopics: Subtopic[] = [
   },
 ]
 
+export const historyTopicEighteenSubtopics = subtopics.map(({ id, label, title, summary }) => ({ id, label, title, summary }))
+
 const mapVisual = {
   src: 'https://zno.osvita.ua/doc/images/znotest/89/8940/23.jpg',
   title: 'Картосхема економічної спеціалізації Наддніпрянщини',
