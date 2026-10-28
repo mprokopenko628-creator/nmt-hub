@@ -108,7 +108,7 @@ function App() {
 
   const subject = subjects.find((item) => item.path === path)
 
-  const topicRoute = path.match(/^\/history-of-ukraine\/topic-(\d+)(\/(?:test|mistakes|modernization|reaction))?$/)
+  const topicRoute = path.match(/^\/history-of-ukraine\/topic-(\d+)(\/(?:test|mistakes|modernization|reaction|economy|politics|culture))?$/)
   if (topicRoute) {
     const topicId = Number(topicRoute[1])
     const history = subjects.find((item) => item.path === '/history-of-ukraine')
@@ -116,7 +116,7 @@ function App() {
     const suffix = topicRoute[2]
     if (title) return suffix === '/test' || suffix === '/mistakes'
       ? <HistoryTopicTestPage topicId={topicId} title={title} mode={suffix === '/mistakes' ? 'mistakes' : 'test'} />
-      : <HistoryTopicPage topicId={topicId} title={title} subtopicId={topicId === 18 && suffix ? suffix.slice(1) : undefined} />
+      : <HistoryTopicPage topicId={topicId} title={title} subtopicId={(topicId === 18 || topicId === 19) && suffix ? suffix.slice(1) : undefined} />
   }
 
   if (path === '/history-of-ukraine/nmt-test-2026' || path === '/history-of-ukraine/nmt-test-2026-2') {

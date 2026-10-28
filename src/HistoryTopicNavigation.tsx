@@ -11,6 +11,7 @@ import HistoryTopicTenQuiz, { historyTopicMistakesKey } from './HistoryTopicTenQ
 import HistoryTopicTwentyNine from './HistoryTopicTwentyNine'
 import HistoryTopicsLater from './HistoryTopicsLater'
 import HistoryTopicEighteen, { historyTopicEighteenSubtopics } from './HistoryTopicEighteen'
+import HistoryTopicNineteen, { historyTopicNineteenSubtopics } from './HistoryTopicNineteen'
 
 export const historyProgramSections = [
   { title: 'Вступ і стародавня історія України', topics: [1, 2] },
@@ -23,7 +24,6 @@ export const historyProgramSections = [
 ]
 
 const readKey = (id: number) => `nmt-hub:history:topic:${id}:read`
-const progressKey = (id: number) => `nmt-hub:history:topic:${id}:progress`
 
 function ActionIcon({ name }: { name: 'list' | 'prev' | 'next' | 'test' | 'check' | 'circle' }) {
   const paths = {
@@ -41,17 +41,6 @@ function readTopicStatuses(count: number) {
   return Array.from({ length: count }, (_, index) => localStorage.getItem(readKey(index + 1)) === 'true')
 }
 
-function readTestProgress(count: number) {
-  return Array.from({ length: count }, (_, index) => Number(localStorage.getItem(progressKey(index + 1)) || 0))
-}
-
-function readMastery(count: number) {
-  return Array.from({ length: count }, (_, index) => {
-    const value = localStorage.getItem(`nmt-hub:history:topic:${index + 1}:mastery`)
-    return value === null ? null : Number(value)
-  })
-}
-
 function readTopicMistakeCount(topicId: number) {
   try {
     const saved = JSON.parse(localStorage.getItem(historyTopicMistakesKey(topicId)) || '[]')
@@ -63,35 +52,30 @@ function readTopicMistakeCount(topicId: number) {
 
 export function HistoryTopicCatalog({ topics }: { topics: readonly string[] }) {
   const [read, setRead] = useState(() => readTopicStatuses(topics.length))
-  const [progress, setProgress] = useState(() => readTestProgress(topics.length))
-  const [mastery, setMastery] = useState(() => readMastery(topics.length))
   const [mistakeCounts, setMistakeCounts] = useState(() => topics.map((_, index) => readTopicMistakeCount(index + 1)))
   const [expandedTopicId, setExpandedTopicId] = useState<number | null>(null)
 
   useEffect(() => {
     const refresh = () => {
       setRead(readTopicStatuses(topics.length))
-      setProgress(readTestProgress(topics.length))
-      setMastery(readMastery(topics.length))
       setMistakeCounts(topics.map((_, index) => readTopicMistakeCount(index + 1)))
     }
     window.addEventListener('storage', refresh)
     window.addEventListener('focus', refresh)
+    window.addEventListener('nmt-hub:history:refresh', refresh)
     return () => {
       window.removeEventListener('storage', refresh)
       window.removeEventListener('focus', refresh)
+      window.removeEventListener('nmt-hub:history:refresh', refresh)
     }
   }, [topics.length])
 
   return <div className="history-program-sections">
     {historyProgramSections.map((section) => {
       const allRead = section.topics.every((id) => read[id - 1])
-      const scores = section.topics.map((id) => mastery[id - 1]).filter((score): score is number => score !== null)
-      const average = scores.length ? Math.round(scores.reduce((total, score) => total + score, 0) / scores.length) : null
       return <details className={`history-program-section${allRead ? ' all-read' : ''}`} key={section.title}>
         <summary>
           <span className="history-section-title">{section.title}</span>
-          <span className="history-section-mastery">Засвоєння тестів: {average === null ? '—' : `${average}%`}{scores.length ? ` · результатів: ${scores.length}` : ''}</span>
           <span className="history-section-count">{section.topics.length} тем</span>
         </summary>
         <ol className="history-section-topics">
@@ -99,25 +83,26 @@ export function HistoryTopicCatalog({ topics }: { topics: readonly string[] }) {
             const testAvailable = id >= 1 && id <= 32
             const mistakes = mistakeCounts[id - 1]
             return <li key={id}>
-              <div className={`history-topic-card${id === 18 && expandedTopicId === id ? ' is-expanded' : ''}`}>
+              <div className={`history-topic-card${(id === 18 || id === 19) && expandedTopicId === id ? ' is-expanded' : ''}`}>
               <div className="history-topic-row">
-                {id === 18 ? <button type="button" className="history-topic-title history-topic-title-link history-topic-expand" aria-expanded={expandedTopicId === id} onClick={() => setExpandedTopicId((current) => current === id ? null : id)}>
-                  <span className="history-topic-number">{String(id).padStart(2, '0')}</span><span>{topics[id - 1]}</span><span className="history-topic-expand-icon" aria-hidden="true">{expandedTopicId === id ? '−' : '+'}</span>
+                {id === 18 || id === 19 ? <button type="button" className="history-topic-title history-topic-title-link history-topic-expand" aria-expanded={expandedTopicId === id} onClick={() => setExpandedTopicId((current) => current === id ? null : id)}>
+                  <span className="history-topic-number">{String(id).padStart(2, '0')}</span><span>{topics[id - 1]}</span>
                 </button> : <a className="history-topic-title history-topic-title-link" href={`/history-of-ukraine/topic-${id}`}>
                   <span className="history-topic-number">{String(id).padStart(2, '0')}</span>{topics[id - 1]}
                 </a>}
-                <span className="history-topic-meta">
-                  <span className={read[id - 1] ? 'topic-status is-read' : 'topic-status'}>{read[id - 1] ? 'Прочитана' : 'Не прочитана'}</span>
-                  {testAvailable && <span className="topic-test-progress">Пройдено: {progress[id - 1]}% · результат: {mastery[id - 1] === null ? '—' : `${mastery[id - 1]}%`}</span>}
-                </span>
                 <span className="history-topic-actions">
                   {testAvailable ? <a href={`/history-of-ukraine/topic-${id}/test`}>Тести</a> : <span className="topic-action-unavailable">Тести</span>}
                   {testAvailable && mistakes > 0 ? <a className="topic-mistake-link" href={`/history-of-ukraine/topic-${id}/mistakes`}>Помилки · {mistakes}</a> : <span className="topic-action-unavailable">Помилки · 0</span>}
                 </span>
               </div>
-              {id === 18 && expandedTopicId === id && <div className="history-subtopics" aria-label="Підтеми теми 18">
+              {id === 18 && expandedTopicId === id && <div className="history-subtopics" aria-label="Теми всередині теми 18">
                 {historyTopicEighteenSubtopics.map((subtopic) => <a className="history-subtopic-link" key={subtopic.id} href={`/history-of-ukraine/topic-18/${subtopic.id}`}>
-                  <span className="history-subtopic-label">{subtopic.label}</span><strong>{subtopic.title}</strong><span>{subtopic.summary}</span><em>Відкрити підтему →</em>
+                  <strong>{subtopic.title}</strong><span>{subtopic.summary}</span>
+                </a>)}
+              </div>}
+              {id === 19 && expandedTopicId === id && <div className="history-subtopics" aria-label="Теми всередині теми 19">
+                {historyTopicNineteenSubtopics.map((subtopic) => <a className="history-subtopic-link" key={subtopic.id} href={`/history-of-ukraine/topic-19/${subtopic.id}`}>
+                  <strong>{subtopic.title}</strong><span>{subtopic.summary}</span>
                 </a>)}
               </div>}
               </div>
@@ -131,17 +116,50 @@ export function HistoryTopicCatalog({ topics }: { topics: readonly string[] }) {
 
 export function HistoryTopicPage({ topicId, title, subtopicId }: { topicId: number; title: string; subtopicId?: string }) {
   const [read, setRead] = useState(() => localStorage.getItem(readKey(topicId)) === 'true')
-  const [progress, setProgress] = useState(() => Number(localStorage.getItem(progressKey(topicId)) || 0))
   const previousId = Math.max(topicId - 1, 1)
   const nextId = Math.min(topicId + 1, 32)
+  const previousHref = topicId === 18 && subtopicId === 'reaction'
+    ? '/history-of-ukraine/topic-18/modernization'
+    : topicId === 18 && subtopicId === 'modernization'
+      ? '/history-of-ukraine/topic-17'
+      : topicId === 19 && subtopicId === 'economy'
+        ? '/history-of-ukraine/topic-18/reaction'
+        : topicId === 19 && subtopicId === 'politics'
+          ? '/history-of-ukraine/topic-19/economy'
+          : topicId === 19 && subtopicId === 'culture'
+            ? '/history-of-ukraine/topic-19/politics'
+            : topicId === 19
+              ? '/history-of-ukraine/topic-18/reaction'
+        : topicId === 1 ? '/history-of-ukraine' : `/history-of-ukraine/topic-${previousId}`
+  const nextHref = topicId === 17
+    ? '/history-of-ukraine/topic-18/modernization'
+    : topicId === 18 && subtopicId === 'modernization'
+      ? '/history-of-ukraine/topic-18/reaction'
+      : topicId === 18 && subtopicId === 'reaction'
+        ? '/history-of-ukraine/topic-19/economy'
+        : topicId === 19 && subtopicId === 'economy'
+          ? '/history-of-ukraine/topic-19/politics'
+          : topicId === 19 && subtopicId === 'politics'
+            ? '/history-of-ukraine/topic-19/culture'
+            : topicId === 19 && subtopicId === 'culture'
+              ? '/history-of-ukraine/topic-20'
+              : topicId === 19
+                ? '/history-of-ukraine/topic-19/economy'
+        : nextId === topicId ? '/history-of-ukraine' : `/history-of-ukraine/topic-${nextId}`
+  const previousLabel = topicId === 1 ? 'Розділи' : topicId === 18 && subtopicId ? 'Попередня' : 'Попередня'
+  const nextLabel = nextId === topicId ? 'Розділи' : 'Наступна'
+  const previousAria = topicId === 1 ? 'Повернутися до всіх тем' : 'Перейти до попередньої теми'
+  const nextAria = 'Перейти до наступної теми'
 
   useEffect(() => {
-    const refresh = () => setProgress(Number(localStorage.getItem(progressKey(topicId)) || 0))
+    const refresh = () => setRead(localStorage.getItem(readKey(topicId)) === 'true')
     window.addEventListener('storage', refresh)
     window.addEventListener('focus', refresh)
+    window.addEventListener('nmt-hub:history:refresh', refresh)
     return () => {
       window.removeEventListener('storage', refresh)
       window.removeEventListener('focus', refresh)
+      window.removeEventListener('nmt-hub:history:refresh', refresh)
     }
   }, [topicId])
 
@@ -158,15 +176,14 @@ export function HistoryTopicPage({ topicId, title, subtopicId }: { topicId: numb
     </header>
     <section className="subject-content">
       <h1>{title}</h1>
-      <div className="topic-progress-strip"><span className={read ? 'topic-status is-read' : 'topic-status'}>{read ? 'Прочитана' : 'Не прочитана'}</span><span>Тест пройдено: <strong>{progress}%</strong></span></div>
-      {topicId >= 1 && topicId <= 2 ? <HistoryTopicsOneTwoFresh topicId={topicId} /> : topicId >= 3 && topicId <= 5 ? <HistoryTopicsOneToFive topicId={topicId} /> : topicId >= 6 && topicId <= 8 ? <HistoryTopicsSixToEight topicId={topicId} /> : topicId === 12 ? <HistoryTopicTwelve /> : topicId >= 13 && topicId <= 14 ? <HistoryTopicsTwelveToFourteen topicId={topicId} /> : topicId === 9 ? <HistoryTopicNine /> : topicId === 10 ? <HistoryTopicTen /> : topicId === 11 ? <HistoryTopicEleven /> : topicId === 18 ? <HistoryTopicEighteen subtopicId={subtopicId} /> : topicId === 29 ? <HistoryTopicTwentyNine /> : topicId >= 15 && topicId <= 28 ? <HistoryTopicsLater topicId={topicId} /> : topicId >= 30 && topicId <= 32 ? <HistoryTopicsLater topicId={topicId} /> : <section className="topic-notes topic-placeholder"><h2>Матеріали теми</h2><p>Матеріали цієї теми ще не додані.</p></section>}
+      {topicId >= 1 && topicId <= 2 ? <HistoryTopicsOneTwoFresh topicId={topicId} /> : topicId >= 3 && topicId <= 5 ? <HistoryTopicsOneToFive topicId={topicId} /> : topicId >= 6 && topicId <= 8 ? <HistoryTopicsSixToEight topicId={topicId} /> : topicId === 12 ? <HistoryTopicTwelve /> : topicId >= 13 && topicId <= 14 ? <HistoryTopicsTwelveToFourteen topicId={topicId} /> : topicId === 9 ? <HistoryTopicNine /> : topicId === 10 ? <HistoryTopicTen /> : topicId === 11 ? <HistoryTopicEleven /> : topicId === 18 ? <HistoryTopicEighteen subtopicId={subtopicId} /> : topicId === 19 ? <HistoryTopicNineteen subtopicId={subtopicId} /> : topicId === 29 ? <HistoryTopicTwentyNine /> : topicId >= 15 && topicId <= 28 ? <HistoryTopicsLater topicId={topicId} /> : topicId >= 30 && topicId <= 32 ? <HistoryTopicsLater topicId={topicId} /> : <section className="topic-notes topic-placeholder"><h2>Матеріали теми</h2><p>Матеріали цієї теми ще не додані.</p></section>}
     </section>
     <nav className="topic-action-bar" aria-label="Навігація та дії з темою">
       <a href="/history-of-ukraine" aria-label="Повернутися до всіх тем"><ActionIcon name="list" /><span>Всі теми</span></a>
-      <a href={topicId === 1 ? '/history-of-ukraine' : `/history-of-ukraine/topic-${previousId}`} aria-label={topicId === 1 ? 'Повернутися до всіх тем' : `Перейти до теми ${previousId}`}><ActionIcon name="prev" /><span>{topicId === 1 ? 'Розділи' : 'Попередня'}</span></a>
-      <a href={nextId === topicId ? '/history-of-ukraine' : `/history-of-ukraine/topic-${nextId}`} aria-label={nextId === topicId ? 'Повернутися до всіх тем' : `Перейти до теми ${nextId}`}><ActionIcon name="next" /><span>{nextId === topicId ? 'Розділи' : 'Наступна'}</span></a>
+      <a href={previousHref} aria-label={previousAria}><ActionIcon name="prev" /><span>{previousLabel}</span></a>
+      <a href={nextHref} aria-label={nextAria}><ActionIcon name="next" /><span>{nextLabel}</span></a>
       <a href={`/history-of-ukraine/topic-${topicId}/test`} aria-label="Перейти до тестів цієї теми"><ActionIcon name="test" /><span>Тести</span></a>
-      <button type="button" className={read ? 'marked-read' : ''} onClick={toggleRead} aria-label={read ? 'Зняти позначку прочитаної теми' : 'Позначити тему прочитаною'}><ActionIcon name={read ? 'check' : 'circle'} /><span>{read ? 'Прочитано' : 'Позначити'}</span></button>
+      <button type="button" className={read ? 'marked-read' : ''} onClick={toggleRead} aria-label="Позначити тему прочитаною"><ActionIcon name={read ? 'check' : 'circle'} /><span>Прочитано</span></button>
     </nav>
   </main>
 }

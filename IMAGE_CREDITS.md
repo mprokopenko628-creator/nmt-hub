@@ -99,5 +99,16 @@
 
 ## Тема 18: українські землі у складі Російської імперії в 1900–1914 рр.
 
-- Візуал у компоненті `HistoryTopicEighteen.tsx`: картосхема економічної спеціалізації українських земель, [ЗНО.Освіта.UA, завдання 8940](https://zno.osvita.ua/doc/images/znotest/89/8940/23.jpg), контекст і тематична сторінка — [банк теми 1900–1914 рр.](https://zno.osvita.ua/ukraine-history/tag-ukrayinski_zemli_v_rosijskij_imperiyi_19001914_rr/).
-- Візуал у компоненті `HistoryTopicEighteen.tsx`: фото українських періодичних видань початку ХХ ст., [ЗНО.Освіта.UA, тематичне завдання](https://zno.osvita.ua/doc/images/znotest/207/20704/52.JPG). Використано як джерело формату завдання ЗНО-ОНЛАЙН, не як офіційний матеріал УЦОЯО.
+- `public/images/topic18/yevhen-chykalenko-nmt-2025.jpg` — обрізаний портрет із візуального матеріалу офіційного звіту НМТ-2025, с. 273, [УЦОЯО](https://testportal.gov.ua/wp-content/uploads/2025/09/Zvit-NMT_2025-Tom_2-11.09.2025.pdf); використано для тренування розпізнавання, джерело — офіційний матеріал УЦОЯО.
+- `public/images/topic18/mykola-mikhnovsky-nmt-2025.jpg` — обрізаний портрет із завдання 13 демонстраційного варіанта НМТ-2025, [УЦОЯО](https://testportal.gov.ua/wp-content/uploads/2024/12/NMT_2025_Istoriya_demo_sajt.pdf); використано для тренування розпізнавання, джерело — офіційний матеріал УЦОЯО.
+- `public/images/topic18/vyacheslav-lypynsky.jpg` — архівний портрет 1921 року, [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Vyacheslav_Lypynsky,_1921.jpg), public domain. У відкритих демонстраційних матеріалах УЦОЯО точний варіант портрета Липинського не підтверджено; використано автентичне архівне фото з перевіреним походженням.
+
+- `public/images/topic18/economic-specialization.jpg` — локальна копія картосхеми економічної спеціалізації українських земель із [завдання 8940 ЗНО.Освіта.UA](https://zno.osvita.ua/doc/images/znotest/89/8940/23.jpg), контекст — [банк теми 1900–1914 рр.](https://zno.osvita.ua/ukraine-history/tag-ukrayinski_zemli_v_rosijskij_imperiyi_19001914_rr/). Це навчальний матеріал освітнього банку, не офіційний файл УЦОЯО; першоджерело/ліцензія на сторінці не вказані.
+- `public/images/topic18/ukrainian-press.jpg` — локальна копія фото українських періодичних видань із [тематичного завдання ЗНО.Освіта.UA](https://zno.osvita.ua/doc/images/znotest/207/20704/52.JPG). Використовується як джерело формату завдання, не як офіційний матеріал УЦОЯО; першоджерело/ліцензія на сторінці не вказані.
+
+## Тема 19: українські землі у складі Австро-Угорщини в 1900–1914 рр.
+
+- Портрет Андрея Шептицького — [Wikimedia Commons, файл A. Szeptycki.jpg](https://commons.wikimedia.org/wiki/File:A._Szeptycki.jpg), архівна фотографія, public domain.
+- Портрет Івана Боберського — [Wikimedia Commons, файл Boberskyi.jpg](https://commons.wikimedia.org/wiki/File:Boberskyi.jpg), фотографія з архіву Степана Гайдучка, public domain.
+- Портрет Кирила Трильовського — [Wikimedia Commons, файл «Доктор Кирило Трильовський»](https://commons.wikimedia.org/wiki/Category:Kyrylo_Tryliovskyi), архівне фото, public domain.
+- Карта Галичини й Угорщини близько 1900 року — [Wikimedia Commons, файл Galicya.i.Wegry.jpg](https://commons.wikimedia.org/wiki/File:Galicya.i.Wegry.jpg), скан енциклопедії Самуеля Оргельбранда, public domain. Використовується як історична карта-контекст, не як офіційне зображення НМТ.
